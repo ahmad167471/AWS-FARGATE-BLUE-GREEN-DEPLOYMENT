@@ -1,17 +1,50 @@
-# Get Default VPC
-data "aws_vpc" "this" {
-  default = true
+# Public subnets
+resource "aws_subnet" "public1" {
+  vpc_id            = aws_vpc.this.id
+  cidr_block        = "10.0.1.0/24"
+  availability_zone = "us-east-1f"
+  map_public_ip_on_launch = true
+  tags = {
+    Name = "${var.project_name}-public-1"
+  }
 }
 
-# Get only ONE subnet per AZ (fixes ALB issue)
-data "aws_subnets" "this" {
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.this.id]
+resource "aws_subnet" "public2" {
+  vpc_id            = aws_vpc.this.id
+  cidr_block        = "10.0.2.0/24"
+  availability_zone = "us-east-1a"
+  map_public_ip_on_launch = true
+  tags = {
+    Name = "${var.project_name}-public-2"
   }
+}
 
-  filter {
-    name   = "default-for-az"
-    values = ["true"]
+# Private subnets
+resource "aws_subnet" "private1" {
+  vpc_id            = aws_vpc.this.id
+  cidr_block        = "10.0.3.0/24"
+  availability_zone = "us-east-1f"
+  map_public_ip_on_launch = false
+  tags = {
+    Name = "${var.project_name}-private-1"
   }
+}
+
+resource "aws_subnet" "private2" {
+  vpc_id            = aws_vpc.this.id
+  cidr_block        = "10.0.4.0/24"
+  availability_zone = "us-east-1a"
+  map_public_ip_on_launch = false
+  tags = {
+    Name = "${var.project_name}-private-2"
+  }
+}
+
+# Outputs for root module
+output "public_subnet_ids" {
+  value = [aws_subnet.public1.id, aws_subnet.public2.id]
+}
+
+output "private_subnets" {
+  value = [aws_subnet.private1.id, aws_subnet.private2.id]
 }
