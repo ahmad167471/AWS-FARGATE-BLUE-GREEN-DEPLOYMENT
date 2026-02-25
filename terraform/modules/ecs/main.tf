@@ -1,61 +1,94 @@
+variable "project_name" {
+  type = string
+}
+
+variable "private_subnets" {
+  type = list(string)
+}
+
+variable "ecs_sg_id" {
+  type = string
+}
+
+variable "blue_tg_arn" {
+  type = string
+}
+
+variable "db_host" {
+  type = string
+}
+
+variable "db_username" {
+  type = string
+}
+
+variable "db_password" {
+  type = string
+}
+
+#########################
+# ECS Cluster
+#########################
 resource "aws_ecs_cluster" "this" {
   name = "${var.project_name}-cluster"
 }
 
+#########################
+# ECS Task Definition
+#########################
 resource "aws_ecs_task_definition" "this" {
   family                   = "${var.project_name}-task"
-  requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = "256"
-  memory                   = "512"
-
-  execution_role_arn = "arn:aws:iam::373317459749:role/ecs_fargate_taskrole"
+  requires_compatibilities = ["FARGATE"]
+  cpu                      = "512"
+  memory                   = "1024"
 
   container_definitions = jsonencode([
     {
-      name  = "ahmad-strapi"
-      image = "373317459749.dkr.ecr.us-east-1.amazonaws.com/ahmad-strapi-bluegreen:latest"
+      name      = "app"
+      image     = "373317459749.dkr.ecr.us-east-1.amazonaws.com/ahmad-strapi-bluegreen:latest"
+      cpu       = 512
+      memory    = 1024
+      essential = true
       portMappings = [
         {
           containerPort = 1337
+          protocol      = "tcp"
         }
       ]
-       environment = [
-      { name = "APP_KEYS", value = "testKey1,testKey2,testKey3,testKey4" },
-      { name = "API_TOKEN_SALT", value = "testSalt" },
-      { name = "ADMIN_JWT_SECRET", value = "testAdminSecret" },
-      { name = "JWT_SECRET", value = "testJwtSecret" }
-    ]
+      environment = [
+        { name = "DB_HOST",     value = var.db_host },
+        { name = "DB_USERNAME", value = var.db_username },
+        { name = "DB_PASSWORD", value = var.db_password }
+      ]
     }
   ])
 }
 
+#########################
+# ECS Service
+#########################
 resource "aws_ecs_service" "this" {
   name            = "${var.project_name}-service"
   cluster         = aws_ecs_cluster.this.id
   task_definition = aws_ecs_task_definition.this.arn
-  desired_count   = 1
+  desired_count   = 2
   launch_type     = "FARGATE"
-  health_check_grace_period_seconds = 60
-  deployment_controller {
-    type = "CODE_DEPLOY"
-  }
-  lifecycle {
-    ignore_changes = [
-      load_balancer,
-      task_definition,
-    ]
-  }
 
   network_configuration {
-  subnets          = var.private_subnets
-  security_groups  = [var.ecs_sg_id]
-  assign_public_ip = true
-}
+    subnets         = var.private_subnets
+    security_groups = [var.ecs_sg_id]
+    assign_public_ip = false
+  }
 
   load_balancer {
     target_group_arn = var.blue_tg_arn
-    container_name   = "ahmad-strapi"
+    container_name   = "app"
     container_port   = 1337
   }
+
+  # Ensure ALB is ready before creating ECS service
+  depends_on = [
+    var.blue_tg_arn
+  ]
 }
