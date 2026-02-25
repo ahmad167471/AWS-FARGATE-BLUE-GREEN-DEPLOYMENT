@@ -1,3 +1,10 @@
+# CodeDeploy Application
+resource "aws_codedeploy_app" "this" {
+  name             = "ahmad-strapi-codedeploy-app"
+  compute_platform = "ECS"
+}
+
+# CodeDeploy Deployment Group
 resource "aws_codedeploy_deployment_group" "this" {
   app_name              = aws_codedeploy_app.this.name
   deployment_group_name = "strapi-deployment-group"
