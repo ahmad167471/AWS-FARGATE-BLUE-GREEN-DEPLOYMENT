@@ -1,3 +1,5 @@
+name: Terraform - Infrastructure
+
 on:
   push:
     branches:
