@@ -9,12 +9,12 @@ resource "aws_ecs_task_definition" "this" {
   cpu                      = "256"
   memory                   = "512"
 
-  execution_role_arn = "arn:aws:iam::811738710312:role/ecs_fargate_taskRole"
+  execution_role_arn = "arn:aws:iam::373317459749:role/ecs_fargate_taskrole"
 
   container_definitions = jsonencode([
     {
       name  = "ahmad-strapi"
-      image = "811738710312.dkr.ecr.us-east-1.amazonaws.com/strapi-bluegreen:latest"
+      image = "373317459749.dkr.ecr.us-east-1.amazonaws.com/ahmad-strapi-bluegreen:latest"
       portMappings = [
         {
           containerPort = 1337

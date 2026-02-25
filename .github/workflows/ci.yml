@@ -1,9 +1,10 @@
 name: CI - Build & Push to ECR
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["Terraform - Infrastructure"]
+    types:
+      - completed
 
 env:
   AWS_REGION: us-east-1
