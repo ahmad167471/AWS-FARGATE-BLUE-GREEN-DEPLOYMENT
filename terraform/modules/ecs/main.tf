@@ -15,6 +15,8 @@ resource "aws_ecs_task_definition" "this" {
   cpu                      = "512"
   memory                   = "1024"
 
+  execution_role_arn = "arn:aws:iam::373317459749:role/ecs_fargate_taskrole"
+
   container_definitions = jsonencode([
     {
       name      = "app"
