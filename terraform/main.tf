@@ -6,6 +6,7 @@ terraform {
     encrypt = true
   }
 }
+#fixed
 
 module "vpc" {
   source       = ".terraform/modules/vpc"

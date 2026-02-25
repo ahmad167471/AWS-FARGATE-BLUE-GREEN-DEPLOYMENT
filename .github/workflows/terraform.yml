@@ -5,11 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "modules/**"
-      - "main.tf"
-      - "variables.tf"
-      - "provider.tf"
-      - "outputs.tf"
+      - "terraform/**"
 
 jobs:
   terraform:
