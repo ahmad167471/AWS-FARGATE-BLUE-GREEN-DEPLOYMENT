@@ -4,6 +4,7 @@ resource "aws_lb" "this" {
   subnets            = var.public_subnets
   security_groups    = [var.alb_sg_id]
 }
+#Fixed
 
 resource "aws_lb_target_group" "blue" {
   name        = "${var.project_name}-blue-tg"
