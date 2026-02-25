@@ -88,3 +88,50 @@ resource "aws_subnet" "private2" {
     Name = "${var.project_name}-private-2"
   }
 }
+
+#########################
+# NAT Gateway + Private Route Table
+#########################
+
+# Elastic IP for NAT Gateway
+resource "aws_eip" "nat" {
+  vpc = true
+  tags = {
+    Name = "${var.project_name}-nat-eip"
+  }
+}
+
+# NAT Gateway in public subnet
+resource "aws_nat_gateway" "this" {
+  allocation_id = aws_eip.nat.id
+  subnet_id     = aws_subnet.public1.id
+  tags = {
+    Name = "${var.project_name}-nat-gateway"
+  }
+}
+
+# Private route table
+resource "aws_route_table" "private" {
+  vpc_id = aws_vpc.this.id
+  tags = {
+    Name = "${var.project_name}-private-rt"
+  }
+}
+
+# Route for Internet access via NAT Gateway
+resource "aws_route" "private_internet" {
+  route_table_id         = aws_route_table.private.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.this.id
+}
+
+# Associate private subnets with private route table
+resource "aws_route_table_association" "private1" {
+  subnet_id      = aws_subnet.private1.id
+  route_table_id = aws_route_table.private.id
+}
+
+resource "aws_route_table_association" "private2" {
+  subnet_id      = aws_subnet.private2.id
+  route_table_id = aws_route_table.private.id
+}
