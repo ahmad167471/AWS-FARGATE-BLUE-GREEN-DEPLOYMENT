@@ -11,6 +11,7 @@ resource "aws_ecr_repository" "this" {
   }
 }
 
+##commit
 resource "aws_ecr_lifecycle_policy" "this" {
   repository = aws_ecr_repository.this.name
 
