@@ -9,18 +9,18 @@ terraform {
 #fixed
 
 module "vpc" {
-  source       = ".terraform/modules/vpc"
+  source       = "./modules/vpc"
   project_name = var.project_name
 }
 
 module "security_groups" {
-  source       = ".terraform/modules/security_groups"
+  source       = "./modules/security_groups"
   vpc_id       = module.vpc.vpc_id
   project_name = var.project_name
 }
 
 module "alb" {
-  source         = ".terraform/modules/alb"
+  source         = "./modules/alb"
   vpc_id         = module.vpc.vpc_id
   public_subnets = module.vpc.public_subnet_ids
   alb_sg_id      = module.security_groups.alb_sg_id
@@ -28,12 +28,12 @@ module "alb" {
 }
 
 module "ecr" {
-  source          = ".terraform/modules/ecr"
+  source          = "./modules/ecr"
   repository_name = "ahmad-strapi-bluegreen"
 }
 
 module "rds" {
-  source = ".terraform/modules/rds"
+  source = "./modules/rds"
 
   project_name    = var.project_name
   vpc_id          = module.vpc.vpc_id
@@ -47,7 +47,7 @@ module "rds" {
 }
 
 module "ecs" {
-  source          = ".terraform/modules/ecs"
+  source          = "./modules/ecs"
   private_subnets = module.vpc.private_subnets
   ecs_sg_id       = module.security_groups.ecs_sg_id
   blue_tg_arn     = module.alb.blue_tg_arn
@@ -59,7 +59,7 @@ module "ecs" {
 }
 
 module "codedeploy" {
-  source        = ".terraform/modules/codedeploy"
+  source        = "./modules/codedeploy"
   cluster_name  = module.ecs.cluster_name
   service_name  = module.ecs.service_name
   blue_tg_name  = module.alb.blue_tg_name
