@@ -49,6 +49,11 @@ resource "aws_ecs_service" "this" {
   desired_count   = 2
   launch_type     = "FARGATE"
 
+  # Add this block so CodeDeploy can manage blue/green deployments
+  deployment_controller {
+    type = "CODE_DEPLOY"
+  }
+
   network_configuration {
     subnets         = var.private_subnets
     security_groups = [var.ecs_sg_id]
