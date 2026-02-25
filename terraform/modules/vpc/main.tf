@@ -95,16 +95,16 @@ resource "aws_subnet" "private2" {
 
 # Elastic IP for NAT Gateway
 resource "aws_eip" "nat" {
-  vpc = true
+  # no vpc argument needed
   tags = {
     Name = "${var.project_name}-nat-eip"
   }
 }
 
-# NAT Gateway in public subnet
 resource "aws_nat_gateway" "this" {
   allocation_id = aws_eip.nat.id
   subnet_id     = aws_subnet.public1.id
+
   tags = {
     Name = "${var.project_name}-nat-gateway"
   }
