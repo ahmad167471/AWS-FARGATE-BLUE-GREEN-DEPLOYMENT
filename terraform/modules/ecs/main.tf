@@ -49,7 +49,7 @@ resource "aws_ecs_service" "this" {
   desired_count   = 2
   launch_type     = "FARGATE"
 
-  # Add this block so CodeDeploy can manage blue/green deployments
+  # CodeDeploy Blue/Green deployment support
   deployment_controller {
     type = "CODE_DEPLOY"
   }
