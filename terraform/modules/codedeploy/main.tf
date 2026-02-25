@@ -1,14 +1,3 @@
-#########################
-# CodeDeploy Application
-#########################
-resource "aws_codedeploy_app" "this" {
-  name             = "ahmad-strapi-codedeploy-app"
-  compute_platform = "ECS"
-}
-
-#########################
-# CodeDeploy Deployment Group
-#########################
 resource "aws_codedeploy_deployment_group" "this" {
   app_name              = aws_codedeploy_app.this.name
   deployment_group_name = "strapi-deployment-group"
@@ -57,40 +46,4 @@ resource "aws_codedeploy_deployment_group" "this" {
       termination_wait_time_in_minutes = 5
     }
   }
-
-  # Optional: explicitly point to revision in S3
-  revision {
-    revision_type = "S3"
-    s3_location {
-      bucket      = "ahmad-task-10"
-      key         = "appspec.json"
-      bundle_type = "JSON"
-    }
-  }
-}
-
-#########################
-# IAM Policy for S3 access
-#########################
-resource "aws_iam_role_policy" "codedeploy_s3_access" {
-  name = "codedeploy-s3-access"
-  role = "codedeploy_role"
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "s3:GetObject",
-          "s3:GetObjectVersion",
-          "s3:ListBucket"
-        ]
-        Resource = [
-          "arn:aws:s3:::ahmad-task-10",
-          "arn:aws:s3:::ahmad-task-10/*"
-        ]
-      }
-    ]
-  })
 }
