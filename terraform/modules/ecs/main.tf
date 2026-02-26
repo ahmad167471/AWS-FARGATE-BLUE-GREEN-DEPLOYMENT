@@ -9,7 +9,7 @@ resource "aws_ecs_cluster" "this" {
 # CloudWatch Log Group
 #########################
 resource "aws_cloudwatch_log_group" "ecs" {
-  name              = "/ecs/${var.project_name}"
+  name              = var.log_group_name
   retention_in_days = 14
 }
 
@@ -49,7 +49,7 @@ resource "aws_ecs_task_definition" "this" {
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-          "awslogs-group"         = aws_cloudwatch_log_group.ecs.name
+          "awslogs-group"         = var.log_group_name
           "awslogs-region"        = var.aws_region
           "awslogs-stream-prefix" = "ecs"
         }

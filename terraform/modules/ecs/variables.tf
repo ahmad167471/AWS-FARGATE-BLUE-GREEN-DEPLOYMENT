@@ -1,37 +1,30 @@
 variable "project_name" {
-  description = "Project name prefix for ECS resources"
-  type        = string
+  type = string
 }
 
 variable "db_host" {
-  description = "Database host"
-  type        = string
+  type = string
 }
 
 variable "db_username" {
-  description = "Database username"
-  type        = string
+  type = string
 }
 
 variable "db_password" {
-  description = "Database password"
-  type        = string
-  sensitive   = true
+  type = string
+  sensitive = true
 }
 
 variable "private_subnets" {
-  description = "List of private subnet IDs"
-  type        = list(string)
+  type = list(string)
 }
 
 variable "ecs_sg_id" {
-  description = "Security group ID for ECS tasks"
-  type        = string
+  type = string
 }
 
 variable "blue_tg_arn" {
-  description = "Target group ARN for blue deployment"
-  type        = string
+  type = string
 }
 
 variable "log_group_name" {
@@ -40,6 +33,6 @@ variable "log_group_name" {
 }
 
 variable "aws_region" {
-  description = "AWS region for ECS and CloudWatch"
-  type        = string
+  type    = string
+  default = "us-east-1"
 }
