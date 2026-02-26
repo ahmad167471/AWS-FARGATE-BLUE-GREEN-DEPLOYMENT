@@ -8,6 +8,13 @@ terraform {
 }
 
 #########################
+# AWS Provider
+#########################
+provider "aws" {
+  region = var.aws_region
+}
+
+#########################
 # VPC Module
 #########################
 module "vpc" {
@@ -76,7 +83,7 @@ module "ecs" {
 
   # CloudWatch logging
   log_group_name = "/ecs/${var.project_name}"
-  aws_region     = var.region   # fixed reference
+  aws_region     = var.aws_region
 }
 
 #########################
