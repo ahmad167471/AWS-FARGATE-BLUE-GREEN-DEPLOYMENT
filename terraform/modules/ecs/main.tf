@@ -42,7 +42,7 @@ resource "aws_ecs_task_definition" "this" {
       { name = "DB_USERNAME",         value = var.db_username },
       { name = "DB_PASSWORD",         value = var.db_password },
       { name = "DATABASE_CLIENT",     value = var.database_client },
-      { name = "DATABASE_PORT", value = tostring(var.database_port) },
+      { name = "DATABASE_PORT",       value = tostring(var.database_port) },
       { name = "DATABASE_NAME",       value = var.database_name },
       { name = "APP_KEYS",            value = var.app_keys },
       { name = "API_TOKEN_SALT",      value = var.api_token_salt },
@@ -64,12 +64,11 @@ resource "aws_ecs_task_definition" "this" {
 }
 
 #########################
-# ECS Service
+# ECS Service (CodeDeploy safe)
 #########################
 resource "aws_ecs_service" "this" {
   name            = "${var.project_name}-service"
   cluster         = aws_ecs_cluster.this.id
-  task_definition = aws_ecs_task_definition.this.arn
   desired_count   = 2
   launch_type     = "FARGATE"
 
@@ -87,6 +86,12 @@ resource "aws_ecs_service" "this" {
     target_group_arn = var.blue_tg_arn
     container_name   = "app"
     container_port   = 1337
+  }
+
+  lifecycle {
+    ignore_changes = [
+      task_definition
+    ]
   }
 
   depends_on = [
