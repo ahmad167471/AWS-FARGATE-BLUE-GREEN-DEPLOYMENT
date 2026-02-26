@@ -74,8 +74,8 @@ resource "aws_ecs_service" "this" {
   }
 
   network_configuration {
-    subnets         = var.private_subnets
-    security_groups = [var.ecs_sg_id]
+    subnets          = var.private_subnets
+    security_groups  = [var.ecs_sg_id]
     assign_public_ip = false
   }
 
@@ -85,7 +85,6 @@ resource "aws_ecs_service" "this" {
     container_port   = 1337
   }
 
-  # Ensure ALB is ready before creating ECS service
   depends_on = [
     var.blue_tg_arn
   ]
@@ -97,16 +96,16 @@ resource "aws_ecs_service" "this" {
 resource "aws_iam_policy" "ecs_logs_policy" {
   name        = "${var.project_name}-ecs-logs"
   description = "Allow ECS tasks to push logs to CloudWatch"
-  policy      = jsonencode({
-    Version = "2012-10-17"
+  policy = jsonencode({
+    Version = "2012-10-17",
     Statement = [
       {
-        Effect = "Allow"
-        Action = [
+        Effect   = "Allow",
+        Action   = [
+          "logs:CreateLogGroup",
           "logs:CreateLogStream",
-          "logs:PutLogEvents",
-          "logs:CreateLogGroup"
-        ]
+          "logs:PutLogEvents"
+        ],
         Resource = "*"
       }
     ]
