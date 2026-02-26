@@ -1,19 +1,19 @@
 variable "project_name" {
-  description = "The name of the project, used for naming resources"
+  description = "The name of the project"
   type        = string
   default     = "ahmad-bluegreen"
 }
 
-variable "db_username" { 
-  description = "RDS PostgreSQL username" 
-  type        = string 
-  default     = "postgres" 
+variable "db_username" {
+  description = "RDS PostgreSQL username"
+  type        = string
+  default     = "postgres"
 }
 
-variable "db_password" { 
-  description = "RDS PostgreSQL password" 
-  type        = string 
-  sensitive   = true 
+variable "db_password" {
+  description = "RDS PostgreSQL password"
+  type        = string
+  sensitive   = true
 }
 
 variable "aws_region" {

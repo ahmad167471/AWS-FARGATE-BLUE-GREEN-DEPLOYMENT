@@ -1,3 +1,8 @@
+variable "aws_region" {
+  description = "AWS region for ECS logs"
+  type        = string
+}
+
 variable "project_name" {
   type = string
 }
@@ -28,11 +33,5 @@ variable "blue_tg_arn" {
 }
 
 variable "log_group_name" {
-  description = "CloudWatch log group name for ECS logs"
-  type        = string
-}
-
-variable "aws_region" {
-  type    = string
-  default = "us-east-1"
+  type = string
 }
