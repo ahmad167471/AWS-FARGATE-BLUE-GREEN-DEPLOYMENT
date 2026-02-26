@@ -68,7 +68,6 @@ resource "aws_ecs_service" "this" {
   desired_count   = 2
   launch_type     = "FARGATE"
 
-  # CodeDeploy Blue/Green deployment support
   deployment_controller {
     type = "CODE_DEPLOY"
   }
