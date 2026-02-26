@@ -8,13 +8,6 @@ terraform {
 }
 
 #########################
-# AWS Provider
-#########################
-provider "aws" {
-  region = var.aws_region
-}
-
-#########################
 # VPC Module
 #########################
 module "vpc" {
