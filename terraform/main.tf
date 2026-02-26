@@ -6,19 +6,27 @@ terraform {
     encrypt = true
   }
 }
-#fixed
 
+#########################
+# VPC Module
+#########################
 module "vpc" {
   source       = "./modules/vpc"
   project_name = var.project_name
 }
 
+#########################
+# Security Groups Module
+#########################
 module "security_groups" {
   source       = "./modules/security_groups"
   vpc_id       = module.vpc.vpc_id
   project_name = var.project_name
 }
 
+#########################
+# ALB Module
+#########################
 module "alb" {
   source         = "./modules/alb"
   vpc_id         = module.vpc.vpc_id
@@ -27,11 +35,17 @@ module "alb" {
   project_name   = var.project_name
 }
 
+#########################
+# ECR Module
+#########################
 module "ecr" {
   source          = "./modules/ecr"
   repository_name = "ahmad-strapi-bluegreen"
 }
 
+#########################
+# RDS Module
+#########################
 module "rds" {
   source = "./modules/rds"
 
@@ -46,6 +60,9 @@ module "rds" {
   db_password = var.db_password
 }
 
+#########################
+# ECS Module
+#########################
 module "ecs" {
   source          = "./modules/ecs"
   private_subnets = module.vpc.private_subnets
@@ -56,8 +73,15 @@ module "ecs" {
   db_host     = module.rds.db_endpoint
   db_username = var.db_username
   db_password = var.db_password
+
+  # CloudWatch logging
+  log_group_name = "/ecs/${var.project_name}"
+  aws_region     = var.aws_region
 }
 
+#########################
+# CodeDeploy Module
+#########################
 module "codedeploy" {
   source        = "./modules/codedeploy"
   cluster_name  = module.ecs.cluster_name
