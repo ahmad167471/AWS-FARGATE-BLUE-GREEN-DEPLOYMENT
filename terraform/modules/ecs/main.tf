@@ -25,37 +25,42 @@ resource "aws_ecs_task_definition" "this" {
 
   execution_role_arn = "arn:aws:iam::373317459749:role/ecs_fargate_taskrole"
 
-  container_definitions = jsonencode([
-    {
-      name      = "app"
-      image     = "373317459749.dkr.ecr.${var.aws_region}.amazonaws.com/ahmad-strapi-bluegreen:latest"
-      cpu       = 512
-      memory    = 1024
-      essential = true
+  container_definitions = jsonencode([{
+    name      = "app"
+    image     = "373317459749.dkr.ecr.${var.aws_region}.amazonaws.com/ahmad-strapi-bluegreen:latest"
+    cpu       = 512
+    memory    = 1024
+    essential = true
 
-      portMappings = [
-        {
-          containerPort = 1337
-          protocol      = "tcp"
-        }
-      ]
+    portMappings = [{
+      containerPort = 1337
+      protocol      = "tcp"
+    }]
 
-      environment = [
-        { name = "DB_HOST",     value = var.db_host },
-        { name = "DB_USERNAME", value = var.db_username },
-        { name = "DB_PASSWORD", value = var.db_password }
-      ]
+    environment = [
+      { name = "DB_HOST",             value = var.db_host },
+      { name = "DB_USERNAME",         value = var.db_username },
+      { name = "DB_PASSWORD",         value = var.db_password },
+      { name = "DATABASE_CLIENT",     value = var.database_client },
+      { name = "DATABASE_PORT",       value = var.database_port },
+      { name = "DATABASE_NAME",       value = var.database_name },
+      { name = "APP_KEYS",            value = var.app_keys },
+      { name = "API_TOKEN_SALT",      value = var.api_token_salt },
+      { name = "ADMIN_JWT_SECRET",    value = var.admin_jwt_secret },
+      { name = "TRANSFER_TOKEN_SALT", value = var.transfer_token_salt },
+      { name = "ENCRYPTION_KEY",      value = var.encryption_key },
+      { name = "JWT_SECRET",          value = var.jwt_secret }
+    ]
 
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          "awslogs-group"         = var.log_group_name
-          "awslogs-region"        = var.aws_region
-          "awslogs-stream-prefix" = "ecs"
-        }
+    logConfiguration = {
+      logDriver = "awslogs"
+      options = {
+        "awslogs-group"         = var.log_group_name
+        "awslogs-region"        = var.aws_region
+        "awslogs-stream-prefix" = "ecs"
       }
     }
-  ])
+  }])
 }
 
 #########################
