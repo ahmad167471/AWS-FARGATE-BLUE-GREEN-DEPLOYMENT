@@ -78,7 +78,6 @@ module "ecs" {
   log_group_name = "/ecs/${var.project_name}"
   aws_region     = var.aws_region
 }
-#trigger
 
 #########################
 # CodeDeploy Module
