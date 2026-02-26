@@ -6,7 +6,7 @@ terraform {
     encrypt = true
   }
 }
-#triggering the Pipeline
+#trigering the Pipeline
 
 #########################
 # VPC Module
