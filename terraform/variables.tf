@@ -1,9 +1,3 @@
-variable "aws_region" {
-  description = "AWS region for all resources"
-  type        = string
-  default     = "us-east-1"
-}
-
 variable "project_name" {
   description = "The name of the project, used for naming resources"
   type        = string
