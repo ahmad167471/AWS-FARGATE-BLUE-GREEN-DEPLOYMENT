@@ -1,11 +1,12 @@
-output "db_endpoint" {
-  value = aws_db_instance.this.address
+variable "project_name" {}
+variable "vpc_id" {}
+
+variable "private_subnets" {
+  type = list(string)
 }
 
-output "db_port" {
-  value = aws_db_instance.this.port
-}
+variable "ecs_sg_id" {}
 
-output "rds_sg_id" {
-  value = aws_security_group.rds_sg.id
-}
+variable "db_name" {}
+variable "db_username" {}
+variable "db_password" {}

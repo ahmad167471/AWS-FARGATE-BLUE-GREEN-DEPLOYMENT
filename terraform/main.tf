@@ -6,7 +6,6 @@ terraform {
     encrypt = true
   }
 }
-#trigering the Pipeline
 
 #########################
 # VPC Module
@@ -53,51 +52,51 @@ module "rds" {
   project_name    = var.project_name
   vpc_id          = module.vpc.vpc_id
   private_subnets = module.vpc.private_subnets
+  ecs_sg_id       = module.security_groups.ecs_sg_id
 
-  ecs_sg_id = module.security_groups.ecs_sg_id
-
-  db_name     = "ahmaddb"
-  db_username = var.db_username
-  db_password = var.db_password
+  db_name     = var.database_name
+  db_username = var.database_username
+  db_password = var.database_password
 }
 
 #########################
 # ECS Module
 #########################
 module "ecs" {
-  source          = "./modules/ecs"
+  source = "./modules/ecs"
+
+  aws_region      = var.aws_region
+  project_name    = var.project_name
   private_subnets = module.vpc.private_subnets
   ecs_sg_id       = module.security_groups.ecs_sg_id
   blue_tg_arn     = module.alb.blue_tg_arn
-  project_name    = var.project_name
+  log_group_name  = "/ecs/${var.project_name}"
 
+  # Database (from RDS + root vars)
   db_host           = module.rds.db_endpoint
-  db_username       = var.db_username
-  db_password       = var.db_password
+  db_username       = var.database_username
+  db_password       = var.database_password
   database_name     = var.database_name
   database_username = var.database_username
   database_password = var.database_password
   database_port     = var.database_port
   database_client   = var.database_client
 
+  # Strapi Secrets
   app_keys            = var.app_keys
   api_token_salt      = var.api_token_salt
   admin_jwt_secret    = var.admin_jwt_secret
   transfer_token_salt = var.transfer_token_salt
   encryption_key      = var.encryption_key
   jwt_secret          = var.jwt_secret
-
-  # CloudWatch logging
-  log_group_name = "/ecs/${var.project_name}"
-  aws_region     = var.aws_region
 }
 
-#fixed
 #########################
 # CodeDeploy Module
 #########################
 module "codedeploy" {
-  source        = "./modules/codedeploy"
+  source = "./modules/codedeploy"
+
   cluster_name  = module.ecs.cluster_name
   service_name  = module.ecs.service_name
   blue_tg_name  = module.alb.blue_tg_name

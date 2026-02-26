@@ -1,12 +1,11 @@
-variable "project_name" {}
-variable "vpc_id" {}
-
-variable "private_subnets" {
-  type = list(string)
+output "db_endpoint" {
+  value = aws_db_instance.this.address
 }
 
-variable "ecs_sg_id" {}
+output "db_port" {
+  value = aws_db_instance.this.port
+}
 
-variable "db_name" {}
-variable "db_username" {}
-variable "db_password" {}
+output "rds_sg_id" {
+  value = aws_security_group.rds_sg.id
+}
