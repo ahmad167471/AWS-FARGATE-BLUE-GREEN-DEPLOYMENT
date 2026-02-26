@@ -42,7 +42,7 @@ resource "aws_ecs_task_definition" "this" {
       { name = "DB_USERNAME",         value = var.db_username },
       { name = "DB_PASSWORD",         value = var.db_password },
       { name = "DATABASE_CLIENT",     value = var.database_client },
-      { name = "DATABASE_PORT",       value = var.database_port },
+      { name = "DATABASE_PORT", value = tostring(var.database_port) },
       { name = "DATABASE_NAME",       value = var.database_name },
       { name = "APP_KEYS",            value = var.app_keys },
       { name = "API_TOKEN_SALT",      value = var.api_token_salt },
