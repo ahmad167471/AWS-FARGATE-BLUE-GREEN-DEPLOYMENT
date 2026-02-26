@@ -6,6 +6,14 @@ resource "aws_ecs_cluster" "this" {
 }
 
 #########################
+# CloudWatch Log Group
+#########################
+resource "aws_cloudwatch_log_group" "ecs" {
+  name              = "/ecs/${var.project_name}"
+  retention_in_days = 14
+}
+
+#########################
 # ECS Task Definition
 #########################
 resource "aws_ecs_task_definition" "this" {
@@ -24,22 +32,32 @@ resource "aws_ecs_task_definition" "this" {
       cpu       = 512
       memory    = 1024
       essential = true
+
       portMappings = [
         {
           containerPort = 1337
           protocol      = "tcp"
         }
       ]
+
       environment = [
         { name = "DB_HOST",     value = var.db_host },
         { name = "DB_USERNAME", value = var.db_username },
         { name = "DB_PASSWORD", value = var.db_password }
       ]
+
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          "awslogs-group"         = aws_cloudwatch_log_group.ecs.name
+          "awslogs-region"        = var.aws_region
+          "awslogs-stream-prefix" = "ecs"
+        }
+      }
     }
   ])
 }
 
-#fixed
 #########################
 # ECS Service
 #########################
@@ -71,4 +89,31 @@ resource "aws_ecs_service" "this" {
   depends_on = [
     var.blue_tg_arn
   ]
+}
+
+#########################
+# ECS Execution Role CloudWatch Policy
+#########################
+resource "aws_iam_policy" "ecs_logs_policy" {
+  name        = "${var.project_name}-ecs-logs"
+  description = "Allow ECS tasks to push logs to CloudWatch"
+  policy      = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "logs:CreateLogGroup"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_logs_attach" {
+  role       = "ecs_fargate_taskrole"
+  policy_arn = aws_iam_policy.ecs_logs_policy.arn
 }
