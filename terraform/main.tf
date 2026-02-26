@@ -71,9 +71,21 @@ module "ecs" {
   blue_tg_arn     = module.alb.blue_tg_arn
   project_name    = var.project_name
 
-  db_host     = module.rds.db_endpoint
-  db_username = var.db_username
-  db_password = var.db_password
+  db_host           = module.rds.db_endpoint
+  db_username       = var.db_username
+  db_password       = var.db_password
+  database_name     = var.database_name
+  database_username = var.database_username
+  database_password = var.database_password
+  database_port     = var.database_port
+  database_client   = var.database_client
+
+  app_keys            = var.app_keys
+  api_token_salt      = var.api_token_salt
+  admin_jwt_secret    = var.admin_jwt_secret
+  transfer_token_salt = var.transfer_token_salt
+  encryption_key      = var.encryption_key
+  jwt_secret          = var.jwt_secret
 
   # CloudWatch logging
   log_group_name = "/ecs/${var.project_name}"

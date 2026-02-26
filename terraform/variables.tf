@@ -10,6 +10,7 @@ variable "project_name" {
   default     = "ahmad-bluegreen"
 }
 
+# RDS credentials
 variable "db_username" {
   description = "RDS PostgreSQL username"
   type        = string
@@ -22,11 +23,7 @@ variable "db_password" {
   sensitive   = true
 }
 
-variable "db_host" {
-  description = "RDS endpoint"
-  type        = string
-}
-
+# Strapi DB config
 variable "database_name" {
   description = "Database name for Strapi"
   type        = string
@@ -55,6 +52,7 @@ variable "database_client" {
   default     = "postgres"
 }
 
+# Strapi secrets
 variable "app_keys" {
   description = "Strapi app keys"
   type        = string
@@ -83,24 +81,5 @@ variable "encryption_key" {
 variable "jwt_secret" {
   description = "Strapi JWT secret"
   type        = string
-}
-
-variable "private_subnets" {
-  description = "Private subnets for ECS tasks"
-  type        = list(string)
-}
-
-variable "ecs_sg_id" {
-  description = "Security Group ID for ECS tasks"
-  type        = string
-}
-
-variable "blue_tg_arn" {
-  description = "ARN of the blue target group"
-  type        = string
-}
-
-variable "log_group_name" {
-  description = "CloudWatch log group name for ECS"
-  type        = string
+  sensitive   = true
 }
